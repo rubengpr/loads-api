@@ -6,3 +6,38 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_PUBLIC_URL")
 }
+
+enum EquipmentType {
+  DRY_VAN
+  REFRIGERATED
+  FLATBED
+  TANKER
+  CONTAINER
+}
+
+model Load {
+  load_id          String   @id @default(uuid())
+  origin_city           String
+  destination_city      String
+  pickup_datetime  DateTime
+  delivery_datetime DateTime
+  equipment_type   EquipmentType
+  loadboard_rate   Decimal
+  notes            String?
+  weight           Decimal?
+  commodity_type   String?
+  num_of_pieces    Int?
+  miles            Decimal?
+  dimensions       String?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@index([origin_city])
+  @@index([destination_city])
+  @@index([pickup_datetime])
+  @@index([delivery_datetime])
+  @@index([equipment_type])
+  @@index([loadboard_rate])
+  @@index([commodity_type])
+  @@map("loads")
+}
