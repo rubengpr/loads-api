@@ -1,13 +1,14 @@
-import express from "express";
-import { PrismaClient } from "@prisma/client";
+import express from 'express';
+import loadRoutes from './routes/loadRoutes.js';
 
 const app = express();
-const prisma = new PrismaClient();
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.json({ message: "Loads API is running!" });
+app.use('/api/loads', loadRoutes);
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Loads API is running!' });
 });
 
 const PORT = process.env.PORT || 3000;

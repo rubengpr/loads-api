@@ -7,3 +7,4 @@ alwaysApply: true
 - Keep controllers thin - delegate business logic to services
 - Validate input data before processing
 - Use Prisma ORM for type-safe database operations
+- Follow MVC design pattern for architecture
