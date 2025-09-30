@@ -1,0 +1,9 @@
+---
+alwaysApply: true
+---
+
+- Use standard REST endpoints with clear resource naming
+- Follow HTTP status codes and methods consistently
+- Keep controllers thin - delegate business logic to services
+- Validate input data before processing
+- Use Prisma ORM for type-safe database operations
