@@ -14,19 +14,19 @@ export const createInboundCall = async (req: Request, res: Response) => {
     }
 
     // Validate enums
-    const validOutcomes = ['TRANSFERRED', 'CANCELED'];
-    const validSentiments = ['POSITIVE', 'NEUTRAL', 'NEGATIVE'];
+    const validOutcomes = ['transferred', 'canceled'];
+    const validSentiments = ['positive', 'neutral', 'negative'];
 
     if (!validOutcomes.includes(outcome)) {
       return res.status(400).json({
-        message: 'Invalid outcome. Must be TRANSFERRED or CANCELED',
+        message: 'Invalid outcome. Must be transferred or canceled',
       });
     }
 
     if (!validSentiments.includes(caller_sentiment)) {
       return res.status(400).json({
         message:
-          'Invalid caller_sentiment. Must be POSITIVE, NEUTRAL, or NEGATIVE',
+          'Invalid caller_sentiment. Must be positive, neutral, or negative',
       });
     }
 

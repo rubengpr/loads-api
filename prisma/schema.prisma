@@ -16,14 +16,14 @@ enum EquipmentType {
 }
 
 enum CallOutcome {
-  TRANSFERRED
-  CANCELED
+  transferred
+  canceled
 }
 
 enum CallerSentiment {
-  POSITIVE
-  NEUTRAL
-  NEGATIVE
+  positive
+  neutral
+  negative
 }
 
 model Load {

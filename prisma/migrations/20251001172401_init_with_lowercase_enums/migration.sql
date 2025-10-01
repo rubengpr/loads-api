@@ -1,6 +1,12 @@
 -- CreateEnum
 CREATE TYPE "EquipmentType" AS ENUM ('DRY_VAN', 'REFRIGERATED', 'FLATBED', 'TANKER', 'CONTAINER');
 
+-- CreateEnum
+CREATE TYPE "CallOutcome" AS ENUM ('transferred', 'canceled');
+
+-- CreateEnum
+CREATE TYPE "CallerSentiment" AS ENUM ('positive', 'neutral', 'negative');
+
 -- CreateTable
 CREATE TABLE "loads" (
     "load_id" TEXT NOT NULL,
@@ -20,6 +26,18 @@ CREATE TABLE "loads" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "loads_pkey" PRIMARY KEY ("load_id")
+);
+
+-- CreateTable
+CREATE TABLE "inbound_calls" (
+    "call_id" TEXT NOT NULL,
+    "outcome" "CallOutcome" NOT NULL,
+    "caller_sentiment" "CallerSentiment" NOT NULL,
+    "notes" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "inbound_calls_pkey" PRIMARY KEY ("call_id")
 );
 
 -- CreateIndex
@@ -42,3 +60,12 @@ CREATE INDEX "loads_loadboard_rate_idx" ON "loads"("loadboard_rate");
 
 -- CreateIndex
 CREATE INDEX "loads_commodity_type_idx" ON "loads"("commodity_type");
+
+-- CreateIndex
+CREATE INDEX "inbound_calls_outcome_idx" ON "inbound_calls"("outcome");
+
+-- CreateIndex
+CREATE INDEX "inbound_calls_caller_sentiment_idx" ON "inbound_calls"("caller_sentiment");
+
+-- CreateIndex
+CREATE INDEX "inbound_calls_created_at_idx" ON "inbound_calls"("created_at");

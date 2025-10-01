@@ -1,8 +1,8 @@
 import prisma from '../lib/prisma.js';
 
 export interface CreateInboundCallData {
-  outcome: 'TRANSFERRED' | 'CANCELED';
-  caller_sentiment: 'POSITIVE' | 'NEUTRAL' | 'NEGATIVE';
+  outcome: 'transferred' | 'canceled';
+  caller_sentiment: 'positive' | 'neutral' | 'negative';
   notes?: string;
 }
 
