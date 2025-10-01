@@ -4,20 +4,12 @@ import { handleError } from '../utils/errorHandler.js';
 
 export const createInboundCall = async (req: Request, res: Response) => {
   try {
-    const {
-      call_start_time,
-      call_end_time,
-      call_duration_seconds,
-      outcome,
-      caller_sentiment,
-      notes,
-    } = req.body;
+    const { outcome, caller_sentiment, notes } = req.body;
 
     // Basic validation
-    if (!call_start_time || !call_end_time || !outcome || !caller_sentiment) {
+    if (!outcome || !caller_sentiment) {
       return res.status(400).json({
-        message:
-          'Missing required fields: call_start_time, call_end_time, outcome, caller_sentiment',
+        message: 'Missing required fields: outcome, caller_sentiment',
       });
     }
 
@@ -38,32 +30,7 @@ export const createInboundCall = async (req: Request, res: Response) => {
       });
     }
 
-    // Validate dates
-    const startTime = new Date(call_start_time);
-    const endTime = new Date(call_end_time);
-
-    if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-      return res.status(400).json({
-        message: 'Invalid date format for call_start_time or call_end_time',
-      });
-    }
-
-    if (endTime <= startTime) {
-      return res.status(400).json({
-        message: 'call_end_time must be after call_start_time',
-      });
-    }
-
-    // Calculate duration if not provided
-    let duration = call_duration_seconds;
-    if (!duration) {
-      duration = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
-    }
-
     const callData = {
-      call_start_time: startTime,
-      call_end_time: endTime,
-      call_duration_seconds: duration,
       outcome,
       caller_sentiment,
       notes: notes || undefined,

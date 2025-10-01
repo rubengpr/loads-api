@@ -55,17 +55,12 @@ model Load {
 
 model InboundCall {
   call_id                String         @id @default(uuid())
-  call_start_time        DateTime
-  call_end_time          DateTime
-  call_duration_seconds  Int
   outcome                CallOutcome
   caller_sentiment       CallerSentiment
   notes                  String?
   created_at             DateTime       @default(now())
   updated_at             DateTime       @updatedAt
 
-  @@index([call_start_time])
-  @@index([call_end_time])
   @@index([outcome])
   @@index([caller_sentiment])
   @@index([created_at])
