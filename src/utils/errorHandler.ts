@@ -1,38 +1,20 @@
-export const handleError = (error: any) => {
-  // If error already has statusCode and message, return as is
-  if (error.statusCode && error.message) {
+export const handleError = (
+  error: unknown,
+): { message: string; statusCode: number } => {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    'statusCode' in error
+  ) {
     return {
-      message: error.message,
-      statusCode: error.statusCode,
+      message: String(error.message),
+      statusCode: Number(error.statusCode),
     };
   }
 
-  // Handle Prisma errors
-  if (error.code === 'P2002') {
-    return {
-      message: 'A record with this information already exists',
-      statusCode: 409,
-    };
-  }
-
-  if (error.code === 'P2025') {
-    return {
-      message: 'Record not found',
-      statusCode: 404,
-    };
-  }
-
-  // Handle validation errors
-  if (error.name === 'ValidationError') {
-    return {
-      message: 'Invalid input data',
-      statusCode: 400,
-    };
-  }
-
-  // Default error
   return {
-    message: 'Internal server error',
+    message: error instanceof Error ? error.message : 'Something went wrong',
     statusCode: 500,
   };
 };
