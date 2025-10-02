@@ -8,11 +8,11 @@ datasource db {
 }
 
 enum EquipmentType {
-  DRY_VAN
-  REFRIGERATED
-  FLATBED
-  TANKER
-  CONTAINER
+  dry_van
+  refrigerated
+  flatbed
+  tanker
+  container
 }
 
 enum CallOutcome {
@@ -30,8 +30,10 @@ model Load {
   load_id          String   @id @default(uuid())
   origin_city           String
   destination_city      String
-  pickup_datetime  DateTime
-  delivery_datetime DateTime
+  pickup_start     DateTime
+  pickup_end       DateTime
+  delivery_start   DateTime
+  delivery_end     DateTime
   equipment_type   EquipmentType
   loadboard_rate   Decimal
   notes            String?
@@ -45,8 +47,10 @@ model Load {
 
   @@index([origin_city])
   @@index([destination_city])
-  @@index([pickup_datetime])
-  @@index([delivery_datetime])
+  @@index([pickup_start])
+  @@index([pickup_end])
+  @@index([delivery_start])
+  @@index([delivery_end])
   @@index([equipment_type])
   @@index([loadboard_rate])
   @@index([commodity_type])

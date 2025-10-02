@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "EquipmentType" AS ENUM ('DRY_VAN', 'REFRIGERATED', 'FLATBED', 'TANKER', 'CONTAINER');
+CREATE TYPE "EquipmentType" AS ENUM ('dry_van', 'refrigerated', 'flatbed', 'tanker', 'container');
 
 -- CreateEnum
 CREATE TYPE "CallOutcome" AS ENUM ('transferred', 'canceled');
