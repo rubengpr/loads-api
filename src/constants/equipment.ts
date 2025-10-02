@@ -1,0 +1,100 @@
+import { EquipmentType } from '@prisma/client';
+
+export const EQUIPMENT_CONFIG = {
+  rateMultipliers: {
+    [EquipmentType.dry_van]: 1.0,
+    [EquipmentType.refrigerated]: 1.4,
+    [EquipmentType.flatbed]: 1.2,
+    [EquipmentType.tanker]: 1.3,
+    [EquipmentType.container]: 1.1,
+  },
+  commodities: {
+    [EquipmentType.dry_van]: [
+      'general freight',
+      'electronics',
+      'clothing',
+      'household goods',
+      'auto parts',
+      'furniture',
+    ],
+    [EquipmentType.refrigerated]: [
+      'food products',
+      'pharmaceuticals',
+      'frozen goods',
+      'fresh produce',
+      'dairy products',
+      'meat products',
+    ],
+    [EquipmentType.flatbed]: [
+      'steel',
+      'lumber',
+      'machinery',
+      'construction materials',
+      'vehicles',
+      'heavy equipment',
+    ],
+    [EquipmentType.tanker]: [
+      'fuel',
+      'chemicals',
+      'liquid food',
+      'water',
+      'oil products',
+      'milk',
+    ],
+    [EquipmentType.container]: [
+      'imported goods',
+      'electronics',
+      'textiles',
+      'manufactured goods',
+      'auto parts',
+    ],
+  },
+  dimensions: {
+    [EquipmentType.dry_van]: ['48x8x8', '53x8x8', '45x8x8'],
+    [EquipmentType.refrigerated]: ['48x8x8', '53x8x8'],
+    [EquipmentType.flatbed]: ['48x8x6', '53x8x6', '40x8x6'],
+    [EquipmentType.tanker]: ['40x8x8', '45x8x8'],
+    [EquipmentType.container]: ['40x8x8', '45x8x8', '20x8x8'],
+  },
+  weights: {
+    [EquipmentType.dry_van]: { min: 10000, max: 45000 },
+    [EquipmentType.refrigerated]: { min: 8000, max: 40000 },
+    [EquipmentType.flatbed]: { min: 5000, max: 80000 },
+    [EquipmentType.tanker]: { min: 10000, max: 80000 },
+    [EquipmentType.container]: { min: 5000, max: 44000 },
+  },
+};
+
+export const NOTES_TEMPLATES = [
+  'driver must have hazmat endorsement',
+  'delivery appointment required',
+  'inside delivery available',
+  'loading dock required',
+  'driver assist loading',
+  'no touch freight',
+  'lumper service available',
+  'drop trailer available',
+  'team drivers preferred',
+  'expedited delivery',
+  'temperature controlled',
+  'sealed trailer required',
+];
+
+export const MAJOR_CITIES = [
+  'los angeles',
+  'san francisco',
+  'chicago',
+  'new york',
+  'boston',
+  'miami',
+  'atlanta',
+  'detroit',
+  'dallas',
+  'houston',
+  'denver',
+  'seattle',
+  'phoenix',
+  'las vegas',
+  'philadelphia',
+  'washington',
+];
