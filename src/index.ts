@@ -1,10 +1,22 @@
 import express from 'express';
 import loadRoutes from './routes/loadRoutes.js';
 import inboundCallRoutes from './routes/inboundCallRoutes.js';
+import { apiKeyAuth } from './middleware/auth.js';
+
+// Validate required environment variables
+if (!process.env.API_KEY) {
+  console.error('❌ API_KEY environment variable is required');
+  process.exit(1);
+}
+
+console.log('✅ Environment variables validated');
 
 const app = express();
 
 app.use(express.json());
+
+// Apply API key authentication to all API routes
+app.use('/api', apiKeyAuth);
 
 app.use('/api/loads', loadRoutes);
 app.use('/api/inbound-calls', inboundCallRoutes);
