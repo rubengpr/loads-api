@@ -1,0 +1,18 @@
+---
+description: 'React-specific patterns and best practices'
+globs: frontend/src/**/*.tsx
+alwaysApply: false
+---
+
+- Use functional components with hooks, TypeScript interfaces for props with "Props" suffix and match component name
+- Use PascalCase for component names
+- Use useState for local state, useReducer for complex logic, lift state up when needed
+- Use handle prefix for internal event handlers, "on" prefix for event handler props
+- Import files in this order: external libraries first, internal modules second, relative imports last. Group related impors together
+- Use named exports for utilities/types, default exports for components
+- Create custom hooks for reusable logic
+- Keep hooks focused on single responsibilities
+- Use try/catch for async operations, useState for error/loading state
+- Use skeleton components for loading states
+- Create reusable ErrorMessage components
+- Mobile-first and responsive design

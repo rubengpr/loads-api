@@ -9,3 +9,4 @@ alwaysApply: true
 - Use Prisma ORM for type-safe database operations
 - Follow MVC design pattern for architecture
 - Use functional components instead of classes
+- Follow responsive design best practices

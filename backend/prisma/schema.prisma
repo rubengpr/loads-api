@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_PUBLIC_URL")
+}
+
+enum EquipmentType {
+  dry_van
+  refrigerated
+  flatbed
+  tanker
+  container
+}
+
+enum CallOutcome {
+  transferred
+  canceled
+}
+
+enum CallerSentiment {
+  positive
+  neutral
+  negative
+}
+
+model Load {
+  load_id          String   @id @default(uuid())
+  origin_city           String
+  destination_city      String
+  pickup_start     DateTime
+  pickup_end       DateTime
+  delivery_start   DateTime
+  delivery_end     DateTime
+  equipment_type   EquipmentType
+  loadboard_rate   Decimal
+  notes            String?
+  weight           Decimal?
+  commodity_type   String?
+  num_of_pieces    Int?
+  miles            Decimal?
+  dimensions       String?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@index([origin_city])
+  @@index([destination_city])
+  @@index([pickup_start])
+  @@index([pickup_end])
+  @@index([delivery_start])
+  @@index([delivery_end])
+  @@index([equipment_type])
+  @@index([loadboard_rate])
+  @@index([commodity_type])
+  @@map("loads")
+}
+
+model InboundCall {
+  call_id                String         @id @default(uuid())
+  outcome                CallOutcome
+  caller_sentiment       CallerSentiment
+  notes                  String?
+  created_at             DateTime       @default(now())
+  updated_at             DateTime       @updatedAt
+
+  @@index([outcome])
+  @@index([caller_sentiment])
+  @@index([created_at])
+  @@map("inbound_calls")
+}
