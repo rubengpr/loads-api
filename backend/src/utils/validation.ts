@@ -5,6 +5,11 @@ const MAX_CITY_NAME_LENGTH = 100;
 const MAX_EQUIPMENT_TYPE_LENGTH = 50;
 const MIN_CITY_NAME_LENGTH = 2;
 
+// Pagination constants
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
+const MIN_PAGE_SIZE = 1;
+
 export interface InboundCallValidationData {
   outcome?: string;
   caller_sentiment?: string;
@@ -23,12 +28,16 @@ export interface LoadFilterValidationData {
   origin_city?: string;
   destination_city?: string;
   equipment_type?: string;
+  page?: string;
+  limit?: string;
 }
 
 export interface ValidatedLoadFilterData {
   origin_city?: string;
   destination_city?: string;
   equipment_type?: EquipmentType;
+  page?: number;
+  limit?: number;
 }
 
 export const validateInboundCallData = (
@@ -66,9 +75,9 @@ export const validateInboundCallData = (
 export const validateLoadFilterData = (
   data: LoadFilterValidationData,
 ): ValidatedLoadFilterData => {
-  const { origin_city, destination_city, equipment_type } = data;
+  const { origin_city, destination_city, equipment_type, page, limit } = data;
 
-  // Check that at least 2 of the 3 parameters are provided
+  // Check that at least 2 of the 3 filter parameters are provided
   const providedParams = [origin_city, destination_city, equipment_type].filter(
     (param) => param && param.trim() !== '',
   );
@@ -138,6 +147,43 @@ export const validateLoadFilterData = (
     }
 
     result.equipment_type = trimmedEquipment as EquipmentType;
+  }
+
+  // Validate pagination parameters
+  if (page !== undefined && page !== '') {
+    const pageNum = parseInt(page, 10);
+
+    if (isNaN(pageNum)) {
+      throw new Error('page must be a valid number');
+    }
+
+    if (pageNum < 1) {
+      throw new Error('page must be at least 1');
+    }
+
+    result.page = pageNum;
+  } else {
+    result.page = 1; // Default to first page
+  }
+
+  if (limit !== undefined && limit !== '') {
+    const limitNum = parseInt(limit, 10);
+
+    if (isNaN(limitNum)) {
+      throw new Error('limit must be a valid number');
+    }
+
+    if (limitNum < MIN_PAGE_SIZE) {
+      throw new Error(`limit must be at least ${MIN_PAGE_SIZE}`);
+    }
+
+    if (limitNum > MAX_PAGE_SIZE) {
+      throw new Error(`limit must not exceed ${MAX_PAGE_SIZE}`);
+    }
+
+    result.limit = limitNum;
+  } else {
+    result.limit = DEFAULT_PAGE_SIZE; // Default page size
   }
 
   return result;
