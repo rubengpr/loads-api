@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { timingSafeEqual } from 'crypto';
 
 export const apiKeyAuth = (req: Request, res: Response, next: NextFunction) => {
   const providedKey = req.headers['x-api-key'] as string;
@@ -20,8 +21,26 @@ export const apiKeyAuth = (req: Request, res: Response, next: NextFunction) => {
     });
   }
 
-  // Validate API key
-  if (providedKey !== validKey) {
+  // Validate API key using constant-time comparison to prevent timing attacks
+  try {
+    const providedBuffer = Buffer.from(providedKey);
+    const validBuffer = Buffer.from(validKey);
+
+    // timingSafeEqual requires same length buffers
+    if (providedBuffer.length !== validBuffer.length) {
+      return res.status(401).json({
+        message: 'Invalid API key',
+        error: 'INVALID_API_KEY',
+      });
+    }
+
+    if (!timingSafeEqual(providedBuffer, validBuffer)) {
+      return res.status(401).json({
+        message: 'Invalid API key',
+        error: 'INVALID_API_KEY',
+      });
+    }
+  } catch (error) {
     return res.status(401).json({
       message: 'Invalid API key',
       error: 'INVALID_API_KEY',
