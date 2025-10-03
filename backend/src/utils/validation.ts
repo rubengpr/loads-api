@@ -1,19 +1,21 @@
 export interface InboundCallValidationData {
   outcome?: string;
   caller_sentiment?: string;
+  carrier_name?: string;
   notes?: string;
 }
 
 export interface ValidatedInboundCallData {
   outcome: 'transferred' | 'canceled';
   caller_sentiment: 'positive' | 'neutral' | 'negative';
+  carrier_name?: string;
   notes?: string;
 }
 
 export const validateInboundCallData = (
   data: InboundCallValidationData,
 ): ValidatedInboundCallData => {
-  const { outcome, caller_sentiment, notes } = data;
+  const { outcome, caller_sentiment, carrier_name, notes } = data;
 
   // Check for required fields
   if (!outcome || !caller_sentiment) {
@@ -37,6 +39,7 @@ export const validateInboundCallData = (
   return {
     outcome: outcome as 'transferred' | 'canceled',
     caller_sentiment: caller_sentiment as 'positive' | 'neutral' | 'negative',
+    carrier_name: carrier_name || undefined,
     notes: notes || undefined,
   };
 };
