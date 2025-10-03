@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import loadRoutes from './routes/loadRoutes.js';
 import inboundCallRoutes from './routes/inboundCallRoutes.js';
 import { apiKeyAuth } from './middleware/auth.js';
@@ -13,6 +14,15 @@ console.log('✅ Environment variables validated');
 
 const app = express();
 
+// Configure CORS
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'X-API-Key'],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get('/health', (req, res) => {
