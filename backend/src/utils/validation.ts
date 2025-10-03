@@ -1,5 +1,10 @@
 import { EquipmentType } from '@prisma/client';
 
+// Validation constants
+const MAX_CITY_NAME_LENGTH = 100;
+const MAX_EQUIPMENT_TYPE_LENGTH = 50;
+const MIN_CITY_NAME_LENGTH = 2;
+
 export interface InboundCallValidationData {
   outcome?: string;
   caller_sentiment?: string;
@@ -78,25 +83,61 @@ export const validateLoadFilterData = (
 
   // Validate and add origin_city if provided
   if (origin_city && origin_city.trim() !== '') {
-    result.origin_city = origin_city.trim();
+    const trimmedOrigin = origin_city.trim();
+
+    if (trimmedOrigin.length < MIN_CITY_NAME_LENGTH) {
+      throw new Error(
+        `origin_city must be at least ${MIN_CITY_NAME_LENGTH} characters`,
+      );
+    }
+
+    if (trimmedOrigin.length > MAX_CITY_NAME_LENGTH) {
+      throw new Error(
+        `origin_city must not exceed ${MAX_CITY_NAME_LENGTH} characters`,
+      );
+    }
+
+    result.origin_city = trimmedOrigin;
   }
 
   // Validate and add destination_city if provided
   if (destination_city && destination_city.trim() !== '') {
-    result.destination_city = destination_city.trim();
+    const trimmedDestination = destination_city.trim();
+
+    if (trimmedDestination.length < MIN_CITY_NAME_LENGTH) {
+      throw new Error(
+        `destination_city must be at least ${MIN_CITY_NAME_LENGTH} characters`,
+      );
+    }
+
+    if (trimmedDestination.length > MAX_CITY_NAME_LENGTH) {
+      throw new Error(
+        `destination_city must not exceed ${MAX_CITY_NAME_LENGTH} characters`,
+      );
+    }
+
+    result.destination_city = trimmedDestination;
   }
 
   // Validate equipment_type if provided
   if (equipment_type && equipment_type.trim() !== '') {
+    const trimmedEquipment = equipment_type.trim();
+
+    if (trimmedEquipment.length > MAX_EQUIPMENT_TYPE_LENGTH) {
+      throw new Error(
+        `equipment_type must not exceed ${MAX_EQUIPMENT_TYPE_LENGTH} characters`,
+      );
+    }
+
     const validEquipmentTypes = Object.values(EquipmentType);
 
-    if (!validEquipmentTypes.includes(equipment_type as EquipmentType)) {
+    if (!validEquipmentTypes.includes(trimmedEquipment as EquipmentType)) {
       throw new Error(
         `Invalid equipment_type. Must be one of: ${validEquipmentTypes.join(', ')}`,
       );
     }
 
-    result.equipment_type = equipment_type as EquipmentType;
+    result.equipment_type = trimmedEquipment as EquipmentType;
   }
 
   return result;
