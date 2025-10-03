@@ -1,17 +1,27 @@
+import VerticalBarChart from './components/charts/BarChart';
+import SentimentPieChart from './components/charts/PieChart';
+import HorizontalBarChart from './components/charts/HorizontalBarChart';
+import DonutChart from './components/charts/DonutChart';
+import Header from './components/Header';
+
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-4xl font-bold text-gray-800 text-center">
-          Hello World! 🌍
-        </h1>
-        <p className="text-gray-600 text-center mt-4">
-          Welcome to the Loads App Frontend
-        </p>
-        <div className="mt-6 text-center">
-          <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-            React + TypeScript + Tailwind + Vite
-          </span>
+    <div className="min-h-screen flex items-start justify-center p-6">
+      <div className="max-w-7xl w-full">
+        <Header />
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 mt-6">
+          <div className="lg:col-span-2">
+            <VerticalBarChart />
+          </div>
+          <div className="lg:col-span-2">
+            <DonutChart />
+          </div>
+          <div className="lg:col-span-2">
+            <SentimentPieChart />
+          </div>
+          <div className="lg:col-span-6">
+            <HorizontalBarChart />
+          </div>
         </div>
       </div>
     </div>
