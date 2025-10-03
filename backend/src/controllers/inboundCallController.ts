@@ -14,7 +14,16 @@ export const createInboundCall = async (req: Request, res: Response) => {
       call: newCall,
     });
   } catch (error) {
-    const { message, statusCode } = handleError(error);
+    // Enhanced error handling with context
+    const { message, statusCode } = handleError(error, {
+      endpoint: '/api/inbound-calls',
+      method: req.method,
+      params: {
+        outcome: req.body?.outcome,
+        caller_sentiment: req.body?.caller_sentiment,
+        carrier_name: req.body?.carrier_name,
+      },
+    });
     res.status(statusCode).json({ message });
   }
 };

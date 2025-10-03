@@ -23,7 +23,7 @@ export const getLoads = async (req: Request, res: Response) => {
 
       const result = await loadModel.getLoadsWithFilters(filters);
 
-      // Return paginated response with metadata
+      // Return consistent paginated response structure
       res.status(200).json({
         data: result.data,
         pagination: result.pagination,
@@ -34,15 +34,36 @@ export const getLoads = async (req: Request, res: Response) => {
         },
       });
     } else {
-      // No filters provided, return all loads (backward compatibility)
+      // No filters provided, return all loads with consistent structure
       const loads = await loadModel.getAllLoads();
+      const total = loads.length;
+
       res.status(200).json({
         data: loads,
-        total: loads.length,
+        pagination: {
+          page: 1,
+          limit: total,
+          total: total,
+          totalPages: 1,
+          hasNextPage: false,
+          hasPrevPage: false,
+        },
+        filters: {},
       });
     }
   } catch (error) {
-    const { message, statusCode } = handleError(error);
+    // Enhanced error handling with context
+    const { message, statusCode } = handleError(error, {
+      endpoint: '/api/loads',
+      method: req.method,
+      params: {
+        origin_city: req.query.origin_city,
+        destination_city: req.query.destination_city,
+        equipment_type: req.query.equipment_type,
+        page: req.query.page,
+        limit: req.query.limit,
+      },
+    });
     res.status(statusCode).json({ message });
   }
 };

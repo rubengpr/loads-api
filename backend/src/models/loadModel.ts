@@ -6,6 +6,7 @@ export const getAllLoads = async () => {
   try {
     return await prisma.load.findMany({});
   } catch (error) {
+    console.error('❌ Database error in getAllLoads:', error);
     throw { message: 'Failed to fetch loads', statusCode: 500 };
   }
 };
@@ -66,6 +67,10 @@ export const getLoadsWithFilters = async (filters: ValidatedLoadFilterData) => {
       },
     };
   } catch (error) {
+    console.error('❌ Database error in getLoadsWithFilters:', {
+      filters,
+      error,
+    });
     throw { message: 'Failed to fetch loads with filters', statusCode: 500 };
   }
 };

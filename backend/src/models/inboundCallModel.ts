@@ -18,6 +18,10 @@ export const createInboundCall = async (data: CreateInboundCallData) => {
       },
     });
   } catch (error) {
+    console.error('❌ Database error in createInboundCall:', {
+      data,
+      error,
+    });
     throw { message: 'Failed to create inbound call record', statusCode: 500 };
   }
 };
