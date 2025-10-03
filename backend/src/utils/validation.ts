@@ -1,3 +1,5 @@
+import { EquipmentType } from '@prisma/client';
+
 export interface InboundCallValidationData {
   outcome?: string;
   caller_sentiment?: string;
@@ -21,12 +23,7 @@ export interface LoadFilterValidationData {
 export interface ValidatedLoadFilterData {
   origin_city?: string;
   destination_city?: string;
-  equipment_type?:
-    | 'dry_van'
-    | 'refrigerated'
-    | 'flatbed'
-    | 'tanker'
-    | 'container';
+  equipment_type?: EquipmentType;
 }
 
 export const validateInboundCallData = (
@@ -91,26 +88,15 @@ export const validateLoadFilterData = (
 
   // Validate equipment_type if provided
   if (equipment_type && equipment_type.trim() !== '') {
-    const validEquipmentTypes = [
-      'dry_van',
-      'refrigerated',
-      'flatbed',
-      'tanker',
-      'container',
-    ];
+    const validEquipmentTypes = Object.values(EquipmentType);
 
-    if (!validEquipmentTypes.includes(equipment_type)) {
+    if (!validEquipmentTypes.includes(equipment_type as EquipmentType)) {
       throw new Error(
         `Invalid equipment_type. Must be one of: ${validEquipmentTypes.join(', ')}`,
       );
     }
 
-    result.equipment_type = equipment_type as
-      | 'dry_van'
-      | 'refrigerated'
-      | 'flatbed'
-      | 'tanker'
-      | 'container';
+    result.equipment_type = equipment_type as EquipmentType;
   }
 
   return result;
