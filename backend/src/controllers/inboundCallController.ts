@@ -22,6 +22,7 @@ export const createInboundCall = async (req: Request, res: Response) => {
         outcome: req.body?.outcome,
         caller_sentiment: req.body?.caller_sentiment,
         carrier_name: req.body?.carrier_name,
+        mc_number: req.body?.mc_number,
       },
     });
     res.status(statusCode).json({ message });

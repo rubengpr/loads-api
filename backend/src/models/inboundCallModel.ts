@@ -4,6 +4,7 @@ export interface CreateInboundCallData {
   outcome: 'transferred' | 'canceled';
   caller_sentiment: 'positive' | 'neutral' | 'negative';
   carrier_name?: string;
+  mc_number?: number;
   notes?: string;
 }
 
@@ -14,6 +15,7 @@ export const createInboundCall = async (data: CreateInboundCallData) => {
         outcome: data.outcome,
         caller_sentiment: data.caller_sentiment,
         carrier_name: data.carrier_name,
+        mc_number: data.mc_number,
         notes: data.notes,
       },
     });

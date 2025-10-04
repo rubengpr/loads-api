@@ -62,6 +62,7 @@ model InboundCall {
   outcome                CallOutcome
   caller_sentiment       CallerSentiment
   carrier_name           String?
+  mc_number              Int?
   notes                  String?
   created_at             DateTime       @default(now())
   updated_at             DateTime       @updatedAt
@@ -69,6 +70,7 @@ model InboundCall {
   @@index([outcome])
   @@index([caller_sentiment])
   @@index([carrier_name])
+  @@index([mc_number])
   @@index([created_at])
   @@map("inbound_calls")
 }
