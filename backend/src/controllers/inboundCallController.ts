@@ -28,3 +28,18 @@ export const createInboundCall = async (req: Request, res: Response) => {
     res.status(statusCode).json({ message });
   }
 };
+
+export const getAnalytics = async (req: Request, res: Response) => {
+  try {
+    const analytics = await inboundCallModel.getAnalytics();
+
+    res.status(200).json(analytics);
+  } catch (error) {
+    // Enhanced error handling with context
+    const { message, statusCode } = handleError(error, {
+      endpoint: '/api/inbound-calls/analytics',
+      method: req.method,
+    });
+    res.status(statusCode).json({ message });
+  }
+};
