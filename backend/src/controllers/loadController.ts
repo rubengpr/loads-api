@@ -9,9 +9,9 @@ export const getLoads = async (req: Request, res: Response) => {
       req.query;
 
     // Check if any filter parameters are provided
-    const hasFilters = origin_city || destination_city || equipment_type;
+    const hasActiveFilters = origin_city || destination_city || equipment_type;
 
-    if (hasFilters) {
+    if (hasActiveFilters) {
       // Validate filter and pagination parameters
       const filters = validateLoadFilterData({
         origin_city: origin_city as string,

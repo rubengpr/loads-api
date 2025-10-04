@@ -36,9 +36,9 @@ export const getLoadsWithFilters = async (filters: ValidatedLoadFilterData) => {
     }
 
     // Calculate pagination
-    const page = filters.page || 1;
-    const limit = filters.limit || 50;
-    const skip = (page - 1) * limit;
+    const currentPage = filters.page || 1;
+    const pageSize = filters.limit || 50;
+    const skip = (currentPage - 1) * pageSize;
 
     // Get total count for pagination metadata
     const total = await prisma.load.count({
@@ -46,24 +46,24 @@ export const getLoadsWithFilters = async (filters: ValidatedLoadFilterData) => {
     });
 
     // Fetch paginated results
-    const data = await prisma.load.findMany({
+    const loadData = await prisma.load.findMany({
       where: whereClause,
       orderBy: {
         created_at: 'desc',
       },
       skip,
-      take: limit,
+      take: pageSize,
     });
 
     return {
-      data,
+      data: loadData,
       pagination: {
-        page,
-        limit,
+        page: currentPage,
+        limit: pageSize,
         total,
-        totalPages: Math.ceil(total / limit),
-        hasNextPage: page < Math.ceil(total / limit),
-        hasPrevPage: page > 1,
+        totalPages: Math.ceil(total / pageSize),
+        hasNextPage: currentPage < Math.ceil(total / pageSize),
+        hasPrevPage: currentPage > 1,
       },
     };
   } catch (error) {

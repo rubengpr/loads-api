@@ -53,14 +53,14 @@ export const validateInboundCallData = (
   }
 
   // Validate enums
-  const validOutcomes = ['transferred', 'canceled'];
-  const validSentiments = ['positive', 'neutral', 'negative'];
+  const VALID_OUTCOMES = ['transferred', 'canceled'];
+  const VALID_SENTIMENTS = ['positive', 'neutral', 'negative'];
 
-  if (!validOutcomes.includes(outcome)) {
+  if (!VALID_OUTCOMES.includes(outcome)) {
     throw new Error('Invalid outcome. Must be transferred or canceled');
   }
 
-  if (!validSentiments.includes(caller_sentiment)) {
+  if (!VALID_SENTIMENTS.includes(caller_sentiment)) {
     throw new Error(
       'Invalid caller_sentiment. Must be positive, neutral, or negative',
     );
@@ -85,17 +85,19 @@ export const validateLoadFilterData = (
   const { origin_city, destination_city, equipment_type, page, limit } = data;
 
   // Check that at least 2 of the 3 filter parameters are provided
-  const providedParams = [origin_city, destination_city, equipment_type].filter(
-    (param) => param && param.trim() !== '',
-  );
+  const activeFilterParams = [
+    origin_city,
+    destination_city,
+    equipment_type,
+  ].filter((param) => param && param.trim() !== '');
 
-  if (providedParams.length < 2) {
+  if (activeFilterParams.length < 2) {
     throw new Error(
       'At least 2 of the following parameters must be provided: origin_city, destination_city, equipment_type',
     );
   }
 
-  const result: ValidatedLoadFilterData = {};
+  const validatedFilters: ValidatedLoadFilterData = {};
 
   // Validate and add origin_city if provided
   if (origin_city && origin_city.trim() !== '') {
@@ -113,7 +115,7 @@ export const validateLoadFilterData = (
       );
     }
 
-    result.origin_city = trimmedOrigin;
+    validatedFilters.origin_city = trimmedOrigin;
   }
 
   // Validate and add destination_city if provided
@@ -132,7 +134,7 @@ export const validateLoadFilterData = (
       );
     }
 
-    result.destination_city = trimmedDestination;
+    validatedFilters.destination_city = trimmedDestination;
   }
 
   // Validate equipment_type if provided
@@ -153,7 +155,7 @@ export const validateLoadFilterData = (
       );
     }
 
-    result.equipment_type = trimmedEquipment as EquipmentType;
+    validatedFilters.equipment_type = trimmedEquipment as EquipmentType;
   }
 
   // Validate pagination parameters
@@ -168,9 +170,9 @@ export const validateLoadFilterData = (
       throw new Error('page must be at least 1');
     }
 
-    result.page = pageNum;
+    validatedFilters.page = pageNum;
   } else {
-    result.page = 1; // Default to first page
+    validatedFilters.page = 1; // Default to first page
   }
 
   if (limit !== undefined && limit !== '') {
@@ -188,10 +190,10 @@ export const validateLoadFilterData = (
       throw new Error(`limit must not exceed ${MAX_PAGE_SIZE}`);
     }
 
-    result.limit = limitNum;
+    validatedFilters.limit = limitNum;
   } else {
-    result.limit = DEFAULT_PAGE_SIZE; // Default page size
+    validatedFilters.limit = DEFAULT_PAGE_SIZE; // Default page size
   }
 
-  return result;
+  return validatedFilters;
 };

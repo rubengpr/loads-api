@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
-import KpiChip from '../ui/KpiChip';
+import KpiChip from '../ui/kpi-chip';
 
 type SentimentDatum = {
   sentiment: 'positive' | 'neutral' | 'negative';
@@ -17,7 +17,7 @@ type SentimentDatum = {
   icon: React.ReactNode;
 };
 
-const data: SentimentDatum[] = [
+const SENTIMENT_DATA: SentimentDatum[] = [
   {
     sentiment: 'positive',
     count: 89,
@@ -41,7 +41,7 @@ const data: SentimentDatum[] = [
   },
 ];
 
-const COLORS = ['#9df8be', '#e5e5e5', '#f79a9a'];
+const SENTIMENT_COLORS = ['#9df8be', '#e5e5e5', '#f79a9a'];
 
 const SentimentTooltip = ({ payload }: { payload?: Array<any> }) => {
   if (!payload || payload.length === 0) return null;
@@ -49,7 +49,7 @@ const SentimentTooltip = ({ payload }: { payload?: Array<any> }) => {
   const groupName: string = entry?.payload?.sentiment ?? '';
   const groupValue: number = entry?.value ?? 0;
   const color: string | undefined = entry?.payload?.color;
-  const total = data.reduce((sum, d) => sum + d.count, 0);
+  const total = SENTIMENT_DATA.reduce((sum, d) => sum + d.count, 0);
   const pct = Math.round((groupValue / total) * 100);
 
   return (
@@ -71,9 +71,9 @@ const SentimentTooltip = ({ payload }: { payload?: Array<any> }) => {
 };
 
 function SentimentPieChart() {
-  const total = data.reduce((sum, item) => sum + item.count, 0);
+  const total = SENTIMENT_DATA.reduce((sum, item) => sum + item.count, 0);
   const positiveCount =
-    data.find((d) => d.sentiment === 'positive')?.count ?? 0;
+    SENTIMENT_DATA.find((d) => d.sentiment === 'positive')?.count ?? 0;
   const positivePercentage = Math.round((positiveCount / total) * 100);
 
   // KPI logic: Positive sentiment target is 40% or higher
@@ -95,17 +95,17 @@ function SentimentPieChart() {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={data}
+                data={SENTIMENT_DATA}
                 dataKey="count"
                 nameKey="sentiment"
                 innerRadius={49}
                 outerRadius={70}
                 paddingAngle={2}
               >
-                {data.map((entry, index) => (
+                {SENTIMENT_DATA.map((entry, index) => (
                   <Cell
                     key={entry.sentiment}
-                    fill={COLORS[index % COLORS.length]}
+                    fill={SENTIMENT_COLORS[index % SENTIMENT_COLORS.length]}
                   />
                 ))}
               </Pie>
@@ -116,7 +116,7 @@ function SentimentPieChart() {
 
         {/* Legend */}
         <div className="flex justify-center items-center mt-6 gap-2">
-          {data.map((item) => (
+          {SENTIMENT_DATA.map((item) => (
             <div
               key={item.sentiment}
               className="group flex items-center justify-between p-3 rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-white/50 dark:bg-gray-800/30 backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/50 transition-all duration-200"

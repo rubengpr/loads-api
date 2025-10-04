@@ -5,8 +5,8 @@ import { validateInboundCallData } from '../utils/validation.js';
 
 export const createInboundCall = async (req: Request, res: Response) => {
   try {
-    const callData = validateInboundCallData(req.body);
-    const newCall = await inboundCallModel.createInboundCall(callData);
+    const validatedCallData = validateInboundCallData(req.body);
+    const newCall = await inboundCallModel.createInboundCall(validatedCallData);
 
     res.status(201).json({
       message: 'Inbound call record created successfully',

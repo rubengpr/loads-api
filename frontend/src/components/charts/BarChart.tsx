@@ -19,11 +19,11 @@ import {
 } from '../ui/card';
 import type { ChartConfig } from '../ui/chart';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';
-import KpiChip from '../ui/KpiChip';
+import KpiChip from '../ui/kpi-chip';
 
 export const description = 'A bar chart';
 
-const chartData = [
+const CHART_DATA = [
   { month: 'January', calls: 186 },
   { month: 'February', calls: 305 },
   { month: 'March', calls: 237 },
@@ -32,7 +32,7 @@ const chartData = [
   { month: 'June', calls: 214 },
 ];
 
-const chartConfig = {
+const CHART_CONFIG = {
   desktop: {
     label: 'Desktop',
     color: 'var(--chart-1)',
@@ -40,15 +40,15 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 function VerticalBarChart() {
-  const totalDesktop = chartData.reduce((sum, item) => sum + item.calls, 0);
+  const totalCalls = CHART_DATA.reduce((sum, item) => sum + item.calls, 0);
 
   // Calculate real data insights
-  const currentMonth = chartData[chartData.length - 1]; // June
-  const previousMonth = chartData[chartData.length - 2]; // May
-  const highestMonth = chartData.reduce((max, item) =>
+  const currentMonth = CHART_DATA[CHART_DATA.length - 1]; // June
+  const previousMonth = CHART_DATA[CHART_DATA.length - 2]; // May
+  const highestMonth = CHART_DATA.reduce((max, item) =>
     item.calls > max.calls ? item : max,
   );
-  const lowestMonth = chartData.reduce((min, item) =>
+  const lowestMonth = CHART_DATA.reduce((min, item) =>
     item.calls < min.calls ? item : min,
   );
 
@@ -66,14 +66,14 @@ function VerticalBarChart() {
           </KpiChip>
         </div>
         <CardDescription>
-          {totalDesktop.toLocaleString()} total calls
+          {totalCalls.toLocaleString()} total calls
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={CHART_CONFIG}>
           <div style={{ width: '100%', height: 303 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart accessibilityLayer data={chartData}>
+              <BarChart accessibilityLayer data={CHART_DATA}>
                 <CartesianGrid
                   vertical={false}
                   stroke="rgb(var(--muted-foreground))"

@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
-import KpiChip from '../ui/KpiChip';
+import KpiChip from '../ui/kpi-chip';
 // Using a custom tooltip for percent + absolute values
 
 type OutcomeDatum = {
@@ -15,7 +15,7 @@ type OutcomeDatum = {
   value: number;
 };
 
-const data: OutcomeDatum[] = [
+const OUTCOME_DATA: OutcomeDatum[] = [
   {
     name: 'transferred',
     value: 144,
@@ -33,15 +33,16 @@ const data: OutcomeDatum[] = [
 ];
 
 // Minimal palette: accent for transferred, muted gray for canceled
-const COLORS = ['var(--chart-2)', 'var(--chart-4)'];
+const OUTCOME_COLORS = ['var(--chart-2)', 'var(--chart-4)'];
 
 export default function DonutChart() {
-  const total = data.reduce((sum, d) => sum + d.value, 0);
-  const transferred = data.find((d) => d.name === 'transferred')?.value ?? 0;
-  const transferredPct = Math.round((transferred / total) * 100);
+  const total = OUTCOME_DATA.reduce((sum, d) => sum + d.value, 0);
+  const transferred =
+    OUTCOME_DATA.find((d) => d.name === 'transferred')?.value ?? 0;
+  const transferredPercentage = Math.round((transferred / total) * 100);
 
   // KPI logic: Transfer rate target is 70% or higher
-  const isOnTarget = transferredPct >= 70;
+  const isOnTarget = transferredPercentage >= 70;
 
   const CustomTooltip = ({ payload }: { payload?: Array<any> }) => {
     if (!payload || payload.length === 0) return null;
@@ -85,15 +86,18 @@ export default function DonutChart() {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={data}
+                data={OUTCOME_DATA}
                 dataKey="value"
                 nameKey="name"
                 innerRadius={49}
                 outerRadius={70}
                 paddingAngle={2}
               >
-                {data.map((entry, index) => (
-                  <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
+                {OUTCOME_DATA.map((entry, index) => (
+                  <Cell
+                    key={entry.name}
+                    fill={OUTCOME_COLORS[index % OUTCOME_COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip cursor={false} content={<CustomTooltip />} />
@@ -103,7 +107,7 @@ export default function DonutChart() {
 
         {/* Legend */}
         <div className="flex items-center mt-6 gap-2">
-          {data.map((item) => (
+          {OUTCOME_DATA.map((item) => (
             <div
               key={item.name}
               className="group flex items-center justify-center flex-1 p-3 rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-white/50 dark:bg-gray-800/30 backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/50 transition-all duration-200"

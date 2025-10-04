@@ -1,0 +1,9 @@
+---
+alwaysApply: true
+---
+
+- Use camelCase with descriptive names for functions and variables
+- Use descriptive error variable names with context
+- Use kebab-case with file type/purpose in name
+- Use UPPER_SNAKE_CASE for constants
+- Organize assets by type/purpose, use kebab-case naming
