@@ -130,6 +130,37 @@ function generateTimes(miles: number) {
   return { pickupStart, pickupEnd, deliveryStart, deliveryEnd };
 }
 
+// Generate realistic timestamp for inbound calls
+// Distribution: August (40 calls), September (45 calls), October (15 calls)
+function generateCallTimestamp(index: number): Date {
+  const year = 2025;
+  let month: number;
+  let dayRange: number;
+
+  // Distribute calls across months
+  // 0-39: August (40 calls)
+  // 40-84: September (45 calls)
+  // 85-99: October (15 calls)
+  if (index < 40) {
+    month = 7; // August (0-indexed)
+    dayRange = 31;
+  } else if (index < 85) {
+    month = 8; // September
+    dayRange = 30;
+  } else {
+    month = 9; // October
+    dayRange = 4; // Only first 4 days of October
+  }
+
+  // Generate random day and time
+  const day = Math.floor(Math.random() * dayRange) + 1;
+  const hour = Math.floor(Math.random() * 12) + 8; // Business hours 8 AM - 8 PM
+  const minute = Math.floor(Math.random() * 60);
+  const second = Math.floor(Math.random() * 60);
+
+  return new Date(year, month, day, hour, minute, second);
+}
+
 // Generate single inbound call
 function generateInboundCall(index: number) {
   // 75% transferred, 25% canceled
@@ -156,12 +187,17 @@ function generateInboundCall(index: number) {
       ? CALL_NOTES[Math.floor(Math.random() * CALL_NOTES.length)]
       : null;
 
+  // Generate realistic timestamp
+  const createdAt = generateCallTimestamp(index);
+
   return {
     outcome,
     caller_sentiment: sentiment,
     carrier_name: carrier.name,
     mc_number: carrier.mc_number,
     notes,
+    created_at: createdAt,
+    updated_at: createdAt,
   };
 }
 
