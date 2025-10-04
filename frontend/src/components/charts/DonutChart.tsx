@@ -8,38 +8,41 @@ import {
   CardTitle,
 } from '../ui/card';
 import KpiChip from '../ui/kpi-chip';
-// Using a custom tooltip for percent + absolute values
+import { OutcomeData } from '../../types/analytics';
 
 type OutcomeDatum = {
   name: 'transferred' | 'canceled';
   value: number;
+  percentage: number;
+  color: string;
+  icon: React.ReactNode;
 };
-
-const OUTCOME_DATA: OutcomeDatum[] = [
-  {
-    name: 'transferred',
-    value: 144,
-    percentage: 72.0,
-    color: 'var(--chart-2)',
-    icon: <CheckCircle className="h-6 w-6" />,
-  },
-  {
-    name: 'canceled',
-    value: 56,
-    percentage: 28.0,
-    color: 'var(--chart-4)',
-    icon: <XCircle className="h-6 w-6" />,
-  },
-];
 
 // Minimal palette: accent for transferred, muted gray for canceled
 const OUTCOME_COLORS = ['var(--chart-2)', 'var(--chart-4)'];
 
-export default function DonutChart() {
-  const total = OUTCOME_DATA.reduce((sum, d) => sum + d.value, 0);
-  const transferred =
-    OUTCOME_DATA.find((d) => d.name === 'transferred')?.value ?? 0;
+interface DonutChartProps {
+  data: OutcomeData[];
+}
+
+export default function DonutChart({ data }: DonutChartProps) {
+  const total = data.reduce((sum, d) => sum + d.count, 0);
+  const transferred = data.find((d) => d.outcome === 'transferred')?.count ?? 0;
   const transferredPercentage = Math.round((transferred / total) * 100);
+
+  // Format data for the chart
+  const chartData: OutcomeDatum[] = data.map((item) => ({
+    name: item.outcome,
+    value: item.count,
+    percentage: item.percentage,
+    color: item.outcome === 'transferred' ? 'var(--chart-2)' : 'var(--chart-4)',
+    icon:
+      item.outcome === 'transferred' ? (
+        <CheckCircle className="h-6 w-6" />
+      ) : (
+        <XCircle className="h-6 w-6" />
+      ),
+  }));
 
   // KPI logic: Transfer rate target is 70% or higher
   const isOnTarget = transferredPercentage >= 70;
@@ -50,7 +53,7 @@ export default function DonutChart() {
     const groupName: string = entry?.payload?.name ?? '';
     const groupValue: number = entry?.value ?? 0;
     const color: string | undefined = entry?.payload?.fill;
-    const pct = Math.round((groupValue / total) * 100);
+    const pct = entry?.payload?.percentage ?? 0;
 
     return (
       <div className="rounded-md border border-gray-200 bg-white p-2 text-sm shadow-md dark:border-gray-800 dark:bg-gray-900">
@@ -86,14 +89,14 @@ export default function DonutChart() {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={OUTCOME_DATA}
+                data={chartData}
                 dataKey="value"
                 nameKey="name"
                 innerRadius={49}
                 outerRadius={70}
                 paddingAngle={2}
               >
-                {OUTCOME_DATA.map((entry, index) => (
+                {chartData.map((entry, index) => (
                   <Cell
                     key={entry.name}
                     fill={OUTCOME_COLORS[index % OUTCOME_COLORS.length]}
@@ -107,7 +110,7 @@ export default function DonutChart() {
 
         {/* Legend */}
         <div className="flex items-center mt-6 gap-2">
-          {OUTCOME_DATA.map((item) => (
+          {chartData.map((item) => (
             <div
               key={item.name}
               className="group flex items-center justify-center flex-1 p-3 rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-white/50 dark:bg-gray-800/30 backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/50 transition-all duration-200"

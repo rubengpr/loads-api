@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from '../ui/card';
 import KpiChip from '../ui/kpi-chip';
+import { SentimentData } from '../../types/analytics';
 
 type SentimentDatum = {
   sentiment: 'positive' | 'neutral' | 'negative';
@@ -17,63 +18,61 @@ type SentimentDatum = {
   icon: React.ReactNode;
 };
 
-const SENTIMENT_DATA: SentimentDatum[] = [
-  {
-    sentiment: 'positive',
-    count: 89,
-    percentage: 44.5,
-    color: '#9df8be',
-    icon: <Smile className="h-6 w-6" />,
-  },
-  {
-    sentiment: 'neutral',
-    count: 67,
-    percentage: 33.5,
-    color: '#e5e5e5',
-    icon: <Meh className="h-6 w-6" />,
-  },
-  {
-    sentiment: 'negative',
-    count: 44,
-    percentage: 22.0,
-    color: '#f79a9a',
-    icon: <Frown className="h-6 w-6" />,
-  },
-];
-
-const SENTIMENT_COLORS = ['#9df8be', '#e5e5e5', '#f79a9a'];
-
-const SentimentTooltip = ({ payload }: { payload?: Array<any> }) => {
-  if (!payload || payload.length === 0) return null;
-  const entry = payload[0];
-  const groupName: string = entry?.payload?.sentiment ?? '';
-  const groupValue: number = entry?.value ?? 0;
-  const color: string | undefined = entry?.payload?.color;
-  const total = SENTIMENT_DATA.reduce((sum, d) => sum + d.count, 0);
-  const pct = Math.round((groupValue / total) * 100);
-
-  return (
-    <div className="rounded-md border border-gray-200 bg-white p-2 text-sm shadow-md dark:border-gray-800 dark:bg-gray-900">
-      <div className="flex items-center gap-2">
-        <span
-          className="inline-block h-3 w-3 rounded-sm"
-          style={{ backgroundColor: color }}
-        />
-        <span className="text-gray-700 dark:text-gray-300 capitalize">
-          {groupName}
-        </span>
-        <span className="ml-auto font-medium text-gray-900 dark:text-gray-100">
-          {pct}% • {groupValue} calls
-        </span>
-      </div>
-    </div>
-  );
+const SENTIMENT_COLORS: Record<string, string> = {
+  positive: '#9df8be',
+  neutral: '#e5e5e5',
+  negative: '#f79a9a',
 };
 
-function SentimentPieChart() {
-  const total = SENTIMENT_DATA.reduce((sum, item) => sum + item.count, 0);
+const SENTIMENT_ICONS: Record<string, React.ReactNode> = {
+  positive: <Smile className="h-6 w-6" />,
+  neutral: <Meh className="h-6 w-6" />,
+  negative: <Frown className="h-6 w-6" />,
+};
+
+interface SentimentPieChartProps {
+  data: SentimentData[];
+}
+
+function SentimentPieChart({ data }: SentimentPieChartProps) {
+  // Format data for the chart
+  const chartData: SentimentDatum[] = data.map((item) => ({
+    sentiment: item.sentiment,
+    count: item.count,
+    percentage: item.percentage,
+    color: SENTIMENT_COLORS[item.sentiment],
+    icon: SENTIMENT_ICONS[item.sentiment],
+  }));
+
+  const SentimentTooltip = ({ payload }: { payload?: Array<any> }) => {
+    if (!payload || payload.length === 0) return null;
+    const entry = payload[0];
+    const groupName: string = entry?.payload?.sentiment ?? '';
+    const groupValue: number = entry?.value ?? 0;
+    const color: string | undefined = entry?.payload?.color;
+    const pct = entry?.payload?.percentage ?? 0;
+
+    return (
+      <div className="rounded-md border border-gray-200 bg-white p-2 text-sm shadow-md dark:border-gray-800 dark:bg-gray-900">
+        <div className="flex items-center gap-2">
+          <span
+            className="inline-block h-3 w-3 rounded-sm"
+            style={{ backgroundColor: color }}
+          />
+          <span className="text-gray-700 dark:text-gray-300 capitalize">
+            {groupName}
+          </span>
+          <span className="ml-auto font-medium text-gray-900 dark:text-gray-100">
+            {pct}% • {groupValue} calls
+          </span>
+        </div>
+      </div>
+    );
+  };
+
+  const total = data.reduce((sum, item) => sum + item.count, 0);
   const positiveCount =
-    SENTIMENT_DATA.find((d) => d.sentiment === 'positive')?.count ?? 0;
+    data.find((d) => d.sentiment === 'positive')?.count ?? 0;
   const positivePercentage = Math.round((positiveCount / total) * 100);
 
   // KPI logic: Positive sentiment target is 40% or higher
@@ -95,18 +94,15 @@ function SentimentPieChart() {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={SENTIMENT_DATA}
+                data={chartData}
                 dataKey="count"
                 nameKey="sentiment"
                 innerRadius={49}
                 outerRadius={70}
                 paddingAngle={2}
               >
-                {SENTIMENT_DATA.map((entry, index) => (
-                  <Cell
-                    key={entry.sentiment}
-                    fill={SENTIMENT_COLORS[index % SENTIMENT_COLORS.length]}
-                  />
+                {chartData.map((entry) => (
+                  <Cell key={entry.sentiment} fill={entry.color} />
                 ))}
               </Pie>
               <Tooltip cursor={false} content={<SentimentTooltip />} />
@@ -116,7 +112,7 @@ function SentimentPieChart() {
 
         {/* Legend */}
         <div className="flex justify-center items-center mt-6 gap-2">
-          {SENTIMENT_DATA.map((item) => (
+          {chartData.map((item) => (
             <div
               key={item.sentiment}
               className="group flex items-center justify-between p-3 rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-white/50 dark:bg-gray-800/30 backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/50 transition-all duration-200"

@@ -19,18 +19,9 @@ import {
 } from '../ui/card';
 import type { ChartConfig } from '../ui/chart';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';
-import KpiChip from '../ui/kpi-chip';
+import { MonthlyData } from '../../types/analytics';
 
 export const description = 'A bar chart';
-
-const CHART_DATA = [
-  { month: 'January', calls: 186 },
-  { month: 'February', calls: 305 },
-  { month: 'March', calls: 237 },
-  { month: 'April', calls: 73 },
-  { month: 'May', calls: 209 },
-  { month: 'June', calls: 214 },
-];
 
 const CHART_CONFIG = {
   desktop: {
@@ -39,32 +30,17 @@ const CHART_CONFIG = {
   },
 } satisfies ChartConfig;
 
-function VerticalBarChart() {
-  const totalCalls = CHART_DATA.reduce((sum, item) => sum + item.calls, 0);
+interface VerticalBarChartProps {
+  data: MonthlyData[];
+}
 
-  // Calculate real data insights
-  const currentMonth = CHART_DATA[CHART_DATA.length - 1]; // June
-  const previousMonth = CHART_DATA[CHART_DATA.length - 2]; // May
-  const highestMonth = CHART_DATA.reduce((max, item) =>
-    item.calls > max.calls ? item : max,
-  );
-  const lowestMonth = CHART_DATA.reduce((min, item) =>
-    item.calls < min.calls ? item : min,
-  );
-
-  const monthOverMonthChange =
-    ((currentMonth.calls - previousMonth.calls) / previousMonth.calls) * 100;
-  const isIncreasing = monthOverMonthChange > 0;
+function VerticalBarChart({ data }: VerticalBarChartProps) {
+  const totalCalls = data.reduce((sum, item) => sum + item.calls, 0);
 
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center gap-2">
-          <CardTitle>Inbound calls managed by month</CardTitle>
-          <KpiChip isOnTarget={isIncreasing}>
-            {isIncreasing ? 'On Target' : 'Needs Review'}
-          </KpiChip>
-        </div>
+        <CardTitle>Inbound calls by month</CardTitle>
         <CardDescription>
           {totalCalls.toLocaleString()} total calls
         </CardDescription>
@@ -73,7 +49,7 @@ function VerticalBarChart() {
         <ChartContainer config={CHART_CONFIG}>
           <div style={{ width: '100%', height: 303 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart accessibilityLayer data={CHART_DATA}>
+              <BarChart accessibilityLayer data={[...data].reverse()}>
                 <CartesianGrid
                   vertical={false}
                   stroke="rgb(var(--muted-foreground))"

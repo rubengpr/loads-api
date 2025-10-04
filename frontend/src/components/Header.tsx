@@ -1,4 +1,26 @@
-export default function Header() {
+interface HeaderProps {
+  lastUpdated: string | null;
+}
+
+function formatLastUpdated(timestamp: string | null): string {
+  if (!timestamp) return 'Loading...';
+
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins} min ago`;
+
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+
+  const diffDays = Math.floor(diffHours / 24);
+  return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+}
+
+export default function Header({ lastUpdated }: HeaderProps) {
   return (
     <header className="w-full mb-8 relative px-5 py-3 rounded-lg bg-gradient-to-b from-black via-gray-900 to-black shadow-2xl">
       <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-gray-400 via-gray-200 to-gray-400 p-[2px]">
@@ -41,7 +63,7 @@ export default function Header() {
                   Last updated
                 </div>
                 <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Just now
+                  {formatLastUpdated(lastUpdated)}
                 </div>
               </div>
             </div>
@@ -57,7 +79,7 @@ export default function Header() {
                 </span>
               </div>
               <div className="text-sm text-gray-500 dark:text-gray-500">
-                Last updated: Just now
+                Last updated: {formatLastUpdated(lastUpdated)}
               </div>
             </div>
           </div>

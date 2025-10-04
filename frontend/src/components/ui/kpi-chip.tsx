@@ -14,7 +14,7 @@ const chipStyles = {
 export default function KpiChip({ isOnTarget, children }: KpiChipProps) {
   return (
     <div
-      className={`px-2 py-[2px] rounded-full text-xs font-medium ${
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
         isOnTarget ? chipStyles.onTarget : chipStyles.needsReview
       }`}
     >

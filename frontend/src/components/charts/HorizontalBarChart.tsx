@@ -18,24 +18,12 @@ import {
 } from '../ui/card';
 import type { ChartConfig } from '../ui/chart';
 import { ChartContainer } from '../ui/chart';
+import { CarrierData } from '../../types/analytics';
 
 type CarrierDatum = {
   carrier: string;
   calls: number;
 };
-
-const CARRIER_DATA: CarrierDatum[] = [
-  { carrier: 'Swift Transportation', calls: 156 },
-  { carrier: 'J.B. Hunt Transport', calls: 142 },
-  { carrier: 'Schneider National', calls: 128 },
-  { carrier: 'Knight-Swift', calls: 115 },
-  { carrier: 'Werner Enterprises', calls: 98 },
-  { carrier: 'Prime Inc.', calls: 87 },
-  { carrier: 'Covenant Transport', calls: 73 },
-  { carrier: 'U.S. Xpress', calls: 65 },
-  { carrier: 'Heartland Express', calls: 54 },
-  { carrier: 'Marten Transport', calls: 42 },
-];
 
 const CHART_CONFIG = {
   calls: {
@@ -44,56 +32,66 @@ const CHART_CONFIG = {
   },
 } satisfies ChartConfig;
 
-const CarrierTooltip = ({
-  payload,
-  active,
-}: {
-  payload?: any[];
-  active?: boolean;
-}) => {
-  if (!active || !payload || payload.length === 0) return null;
+interface HorizontalBarChartProps {
+  data: CarrierData[];
+}
 
-  const selectedCarrierData = payload[0].payload;
-  const total = CARRIER_DATA.reduce(
-    (sum: number, item: CarrierDatum) => sum + item.calls,
-    0,
-  );
-  const percentage = Math.round((selectedCarrierData.calls / total) * 100);
+function HorizontalBarChart({ data }: HorizontalBarChartProps) {
+  // Format data for the chart - capitalize carrier names
+  const chartData: CarrierDatum[] = data.map((item) => ({
+    carrier: item.carrier_name
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' '),
+    calls: item.calls,
+  }));
 
-  return (
-    <div className="rounded-md border border-gray-200 bg-white p-3 text-sm shadow-md dark:border-gray-800 dark:bg-gray-900">
-      <div className="space-y-1">
-        <div className="font-medium text-gray-900 dark:text-gray-100">
-          {selectedCarrierData.carrier}
-        </div>
-        <div className="flex justify-between gap-4">
-          <span className="text-gray-600 dark:text-gray-400">Total Calls:</span>
-          <span className="font-medium text-gray-900 dark:text-gray-100">
-            {selectedCarrierData.calls.toLocaleString()}
-          </span>
-        </div>
-        <div className="flex justify-between gap-4">
-          <span className="text-gray-600 dark:text-gray-400">
-            Market Share:
-          </span>
-          <span className="font-medium text-gray-900 dark:text-gray-100">
-            {percentage}%
-          </span>
+  const CarrierTooltip = ({
+    payload,
+    active,
+  }: {
+    payload?: any[];
+    active?: boolean;
+  }) => {
+    if (!active || !payload || payload.length === 0) return null;
+
+    const selectedCarrierData = payload[0].payload;
+    const total = chartData.reduce(
+      (sum: number, item: CarrierDatum) => sum + item.calls,
+      0,
+    );
+    const percentage = Math.round((selectedCarrierData.calls / total) * 100);
+
+    return (
+      <div className="rounded-md border border-gray-200 bg-white p-3 text-sm shadow-md dark:border-gray-800 dark:bg-gray-900">
+        <div className="space-y-1">
+          <div className="font-medium text-gray-900 dark:text-gray-100">
+            {selectedCarrierData.carrier}
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-600 dark:text-gray-400">
+              Total Calls:
+            </span>
+            <span className="font-medium text-gray-900 dark:text-gray-100">
+              {selectedCarrierData.calls.toLocaleString()}
+            </span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-600 dark:text-gray-400">
+              Market Share:
+            </span>
+            <span className="font-medium text-gray-900 dark:text-gray-100">
+              {percentage}%
+            </span>
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
-function HorizontalBarChart() {
-  const total = CARRIER_DATA.reduce((sum, item) => sum + item.calls, 0);
-  const topCarrier = CARRIER_DATA[0];
+  const total = chartData.reduce((sum, item) => sum + item.calls, 0);
+  const topCarrier = chartData[0];
   const topCarrierPercentage = Math.round((topCarrier.calls / total) * 100);
-
-  // Debug logging
-  console.log('CarrierUsageChart - Data:', CARRIER_DATA);
-  console.log('CarrierUsageChart - Total:', total);
-  console.log('CarrierUsageChart - Sample item:', CARRIER_DATA[0]);
 
   return (
     <Card>
@@ -110,7 +108,7 @@ function HorizontalBarChart() {
           <div style={{ width: '100%', height: 350 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
-                data={CARRIER_DATA}
+                data={chartData}
                 layout="vertical"
                 margin={{ top: 20, right: 30, left: 120, bottom: 20 }}
               >
@@ -156,7 +154,7 @@ function HorizontalBarChart() {
 
         {/* Top 3 Carriers Summary */}
         <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 justify-items-center">
-          {CARRIER_DATA.slice(0, 3).map((carrier, index) => {
+          {chartData.slice(0, 3).map((carrier, index) => {
             const percentage = Math.round((carrier.calls / total) * 100);
             const position = index + 1;
 
