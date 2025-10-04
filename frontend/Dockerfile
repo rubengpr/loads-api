@@ -7,16 +7,16 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy frontend package files
-COPY frontend/package*.json ./frontend/
+COPY package*.json ./
 
 # Install dependencies
-RUN cd frontend && npm ci
+RUN npm ci
 
 # Copy frontend source code
-COPY frontend/ ./frontend/
+COPY . .
 
 # Build the application
-RUN cd frontend && npm run build
+RUN npm run build
 
 # ============================================
 # Stage 2: Production
@@ -27,13 +27,13 @@ FROM node:20-alpine AS production
 WORKDIR /app
 
 # Copy frontend package files
-COPY frontend/package*.json ./
+COPY package*.json ./
 
 # Install production dependencies
 RUN npm ci --only=production
 
 # Copy built application from builder stage
-COPY --from=builder /app/frontend/dist ./dist
+COPY --from=builder /app/dist ./dist
 
 # Expose port 3000
 EXPOSE 3000

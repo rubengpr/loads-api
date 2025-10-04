@@ -17,8 +17,8 @@ services:
 
   api:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     environment:
       DATABASE_PUBLIC_URL: postgresql://postgres:postgres@db:5432/loads_db
       API_KEY: ${API_KEY}
@@ -31,7 +31,6 @@ services:
         condition: service_healthy
     command: >
       sh -c "
-        cd backend &&
         npx prisma migrate deploy &&
         npx tsx src/seed.ts &&
         node dist/index.js
@@ -39,14 +38,16 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - '5173:3000'
     depends_on:
       - api
     environment:
       - NODE_ENV=production
+      - VITE_API_URL=http://api:3000
+      - VITE_API_KEY=${API_KEY}
 
 volumes:
   postgres_data:
